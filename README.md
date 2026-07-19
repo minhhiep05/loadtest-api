@@ -65,7 +65,7 @@ GitLab CI/CD: push code → build Docker image → push registry → deploy tự
 
 <h2 id="buoc-1">✅ 1. Cluster 2 node Ready</h2>
 
-![Nodes Ready](nodes-ready.png)
+![Nodes Ready](nodes-ready.png.png)
 
 <h2 id="buoc-2">🔒 2. HTTPS Certificate hợp lệ</h2>
 
