@@ -4,7 +4,7 @@
 
 
 ### 1. Cluster 2 node Ready
-![Nodes Ready](docs/screenshots/Cluster 2 node Ready.png)
+![Nodes Ready](docs/screenshots/nodes-ready.png)
 
 ### 2. HTTPS Certificate hợp lệ
 ![Certificate Ready](docs/screenshots/certificate-ready.png)
