@@ -3,18 +3,18 @@
 <details>
 <summary><strong>📑 Mục lục (bấm để xem)</strong></summary>
 
-- [Giới thiệu](#giới-thiệu)
-- [Kiến trúc tổng quan](#kiến-trúc-tổng-quan)
-- [Công nghệ sử dụng](#công-nghệ-sử-dụng)
-- [Demo Video](#demo-video)
-- [1. Cluster 2 node Ready](#1-cluster-2-node-ready)
-- [2. HTTPS Certificate hợp lệ](#2-https-certificate-hợp-lệ)
-- [3. HPA tự động scale Pod theo tải CPU](#3-hpa-tự-động-scale-pod-theo-tải-cpu)
-- [4. GitLab CI/CD Pipeline chạy thành công](#4-gitlab-cicd-pipeline-chạy-thành-công)
-- [5. Giám sát bằng Grafana + Prometheus](#5-giám-sát-bằng-grafana--prometheus)
-- [6. Giao diện Web Demo trực tiếp](#6-giao-diện-web-demo-trực-tiếp)
-- [7. Self-healing khi node gặp sự cố](#7-self-healing-khi-node-gặp-sự-cố)
-- [Tác giả](#tác-giả)
+- 📌 [Giới thiệu](#giới-thiệu)
+- 🏗️ [Kiến trúc tổng quan](#kiến-trúc-tổng-quan)
+- 🛠️ [Công nghệ sử dụng](#công-nghệ-sử-dụng)
+- 🎬 [Demo Video](#demo-video)
+- ✅ [1. Cluster 2 node Ready](#1-cluster-2-node-ready)
+- 🔒 [2. HTTPS Certificate hợp lệ](#2-https-certificate-hợp-lệ)
+- 📈 [3. HPA tự động scale Pod theo tải CPU](#3-hpa-tự-động-scale-pod-theo-tải-cpu)
+- 🚀 [4. GitLab CI/CD Pipeline chạy thành công](#4-gitlab-cicd-pipeline-chạy-thành-công)
+- 📊 [5. Giám sát bằng Grafana + Prometheus](#5-giám-sát-bằng-grafana--prometheus)
+- 🌐 [6. Giao diện Web Demo trực tiếp](#6-giao-diện-web-demo-trực-tiếp)
+- 🔄 [7. Self-healing khi node gặp sự cố](#7-self-healing-khi-node-gặp-sự-cố)
+- 👤 [Tác giả](#tác-giả)
 
 </details>
 ## Giới thiệu
