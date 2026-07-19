@@ -73,3 +73,12 @@ Trục xuất toàn bộ pod ra khỏi worker:
 Khôi phục lại worker sau khi demo xong:
 
 ![node uncordon](node-uncordon.png)
+
+## Tác giả
+
+**Doan Minh Hiep**
+
+- GitHub: [@minhhiep05](https://github.com/minhhiep05)
+- GitLab: [@doanhiep169](https://gitlab.com/doanhiep169)
+- Email: doanhiep169@gmail.com
+
