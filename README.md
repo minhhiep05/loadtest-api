@@ -58,8 +58,8 @@ GitLab CI/CD: push code → build Docker image → push registry → deploy tự
 | Ứng dụng demo | Python (Flask) |
 
 🎬 Demo Video
-- HPA Auto-scaling: https://youtu.be/vFYXPUYhfiA
-- Self-healing (cordon/drain): https://youtu.be/7viwdsLyjOA
+- HPA Auto-scaling: https://youtu.be/vFYXPUYhfiA .
+- Self-healing (cordon/drain): https://youtu.be/7viwdsLyjOA .
 
 ### 1. Cluster 2 node Ready
 ![Nodes Ready](nodes-ready.png.png)
