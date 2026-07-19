@@ -23,6 +23,19 @@ Prometheus (scrape metrics) ──▶ Grafana (dashboard giám sát)
 
 GitLab CI/CD: push code → build Docker image → push registry → deploy tự động lên cluster
 ```
+## Công nghệ sử dụng
+
+| Thành phần | Công nghệ |
+|---|---|
+| Container Orchestration | Kubernetes (kubeadm), Calico (CNI) |
+| Containerization | Docker |
+| Package Manager | Helm |
+| Reverse Proxy / Ingress | nginx-ingress |
+| HTTPS tự động | cert-manager + Let's Encrypt |
+| Giám sát | Prometheus, Grafana, kube-state-metrics, node-exporter |
+| CI/CD | GitLab CI/CD |
+| Load Testing | k6 |
+| Ứng dụng demo | Python (Flask) |
 
 ## Demo Video
 - HPA Auto-scaling: https://youtu.be/vFYXPUYhfiA
