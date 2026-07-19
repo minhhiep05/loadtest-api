@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/doanhiep169/loadtest-api/badges/main/pipeline.svg)](https://gitlab.com/doanhiep169/loadtest-api/-/commits/main)
+
 ## Demo Video
 - HPA Auto-scaling: https://youtu.be/vFYXPUYhfiA
 - Self-healing (cordon/drain): https://youtu.be/7viwdsLyjOA
