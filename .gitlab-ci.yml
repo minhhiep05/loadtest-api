@@ -12,6 +12,7 @@ build:
 deploy:
   stage: deploy
   script:
+    - export KUBECONFIG=/etc/gitlab-runner/.kube/config
     - kubectl set image deployment/loadtest-deployment loadtest-app=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
     - kubectl rollout status deployment/loadtest-deployment
   when: manual
