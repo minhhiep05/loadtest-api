@@ -19,3 +19,17 @@
 
 ### 6. Giao diện Web Demo trực tiếp
 ![Web Demo](web-demo.png)
+
+## 7. Self-healing khi node gặp sự cố
+
+Cô lập node worker (đánh dấu không nhận pod mới):
+
+![node cordon](node-cordon.png)
+
+Trục xuất toàn bộ pod ra khỏi worker:
+
+![pod drain](pod-drain.png)
+
+Khôi phục lại worker sau khi demo xong:
+
+![node uncordon](node-uncordon.png)
