@@ -19,7 +19,7 @@
 
 </details>
 
-## Giới thiệu
+📌 Giới thiệu
 
 Dự án mô phỏng một hệ thống Kubernetes hoàn chỉnh gồm 2 node (master + worker), triển khai bằng kubeadm, có khả năng **tự động mở rộng (auto-scaling)** theo tải CPU thực tế và **tự phục hồi (self-healing)** khi node gặp sự cố. Toàn bộ quy trình build & deploy được tự động hóa qua GitLab CI/CD, truy cập qua domain riêng với HTTPS, và giám sát real-time bằng Prometheus + Grafana.
 
@@ -42,7 +42,7 @@ Prometheus (scrape metrics) ──▶ Grafana (dashboard giám sát)
 
 GitLab CI/CD: push code → build Docker image → push registry → deploy tự động lên cluster
 ```
-## Công nghệ sử dụng
+🛠️Công nghệ sử dụng
 
 | Thành phần | Công nghệ |
 |---|---|
@@ -57,14 +57,14 @@ GitLab CI/CD: push code → build Docker image → push registry → deploy tự
 | Load Testing | k6 |
 | Ứng dụng demo | Python (Flask) |
 
-## Demo Video
+🎬 Demo Video
 - HPA Auto-scaling: https://youtu.be/vFYXPUYhfiA
 - Self-healing (cordon/drain): https://youtu.be/7viwdsLyjOA
 
-### 1. Cluster 2 node Ready
+✅ 1. Cluster 2 node Ready
 ![Nodes Ready](nodes-ready.png.png)
 
-### 2. HTTPS Certificate hợp lệ
+🔒 2. HTTPS Certificate hợp lệ
 ![Certificate Ready](certificate-ready.png)
 
 ### 3. HPA tự động scale Pod theo tải CPU
