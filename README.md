@@ -7,6 +7,7 @@
 - 🏗️ [Kiến trúc tổng quan](#kiến-trúc-tổng-quan)
 - 🛠️ [Công nghệ sử dụng](#công-nghệ-sử-dụng)
 - 🎬 [Demo Video](#demo-video)
+- ⚙️ [Cách triển khai](#cách-triển-khai)
 - ✅ [1. Cluster 2 node Ready](#1-cluster-2-node-ready)
 - 🔒 [2. HTTPS Certificate hợp lệ](#2-https-certificate-hợp-lệ)
 - 📈 [3. HPA tự động scale Pod theo tải CPU](#3-hpa-tự-động-scale-pod-theo-tải-cpu)
@@ -14,6 +15,7 @@
 - 📊 [5. Giám sát bằng Grafana + Prometheus](#5-giám-sát-bằng-grafana--prometheus)
 - 🌐 [6. Giao diện Web Demo trực tiếp](#6-giao-diện-web-demo-trực-tiếp)
 - 🔄 [7. Self-healing khi node gặp sự cố](#7-self-healing-khi-node-gặp-sự-cố)
+- 🔮 [Định hướng cải thiện nếu triển khai Production](#định-hướng-cải-thiện-nếu-triển-khai-production)
 - 👤 [Tác giả](#tác-giả)
 
 </details>
@@ -59,6 +61,15 @@ GitLab CI/CD: push code → build Docker image → push registry → deploy tự
 ## Demo Video
 - HPA Auto-scaling: https://youtu.be/vFYXPUYhfiA
 - Self-healing (cordon/drain): https://youtu.be/7viwdsLyjOA
+
+## Cách triển khai
+
+1. Chuẩn bị 2 EC2 instance (tối thiểu t3.medium, Ubuntu 22.04 LTS)
+2. Cài đặt Kubernetes cluster bằng kubeadm trên cả 2 máy
+3. Deploy ứng dụng: `kubectl apply -f k8s/`
+4. Cài Ingress + cert-manager để có HTTPS qua domain riêng
+5. Cài Prometheus + Grafana: `helm install monitoring prometheus-community/kube-prometheus-stack`
+6. Chạy load test bằng k6 để kiểm tra HPA: `k6 run loadtest.js`
 
 ### 1. Cluster 2 node Ready
 ![Nodes Ready](nodes-ready.png.png)
