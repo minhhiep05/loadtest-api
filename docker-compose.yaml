@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  loadtest-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: devops-loadtest-app
+    ports:
+      - "3000:3000"
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    # Set resource constraints to simulate a realistic cloud pod environment
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 256M
+        reservations:
+          cpus: '0.2'
+          memory: 64M
+    restart: unless-stopped
+

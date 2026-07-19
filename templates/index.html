@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Test & Resource Monitor Designed By Doan Hiep</title>
+    <!-- Import Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Import Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0914;
+            --bg-gradient: linear-gradient(135deg, #0b0914 0%, #161224 50%, #05040a 100%);
+            --card-bg: rgba(26, 21, 44, 0.65);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --accent-cyan: #00f2fe;
+            --accent-purple: #8a2be2;
+            --accent-pink: #ff007f;
+            --success-color: #00e676;
+            --warning-color: #ff9100;
+            --danger-color: #ff1744;
+            --neon-glow-cyan: 0 0 15px rgba(0, 242, 254, 0.3);
+            --neon-glow-purple: 0 0 15px rgba(138, 43, 226, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 1.5rem;
+        }
+
+        .logo-area h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .logo-area p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            border: 1px solid var(--card-border);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success-color);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 230, 118, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+        }
+
+        /* Dashboard Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Panels */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+        }
+
+        .card-title i {
+            color: var(--accent-cyan);
+        }
+
+        /* Metrics grid for numbers */
+        .metrics-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-badge-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-badge-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-badge-value.cyan { color: var(--accent-cyan); text-shadow: var(--neon-glow-cyan); }
+        .metric-badge-value.purple { color: var(--accent-purple); text-shadow: var(--neon-glow-purple); }
+        .metric-badge-value.pink { color: var(--accent-pink); }
+        .metric-badge-value.success { color: var(--success-color); }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .input-control {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: var(--neon-glow-cyan);
+        }
+
+        select.input-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+            padding-right: 2.5rem;
+        }
+
+        /* Buttons styling */
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 0.85rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+            color: var(--bg-color);
+            box-shadow: var(--neon-glow-purple);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.5), 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #d500f9 100%);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 23, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 23, 68, 0.6);
+        }
+
+        .btn-disabled {
+            background: #2d2a3a;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        /* Live console simulation */
+        .console-panel {
+            background: #050409;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: var(--success-color);
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 1rem;
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        .console-line {
+            margin-bottom: 0.25rem;
+            white-space: pre-wrap;
+        }
+
+        .console-line.error { color: var(--danger-color); }
+        .console-line.info { color: var(--accent-cyan); }
+        .console-line.warn { color: var(--warning-color); }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            margin-top: 1rem;
+        }
+
+        /* Top row cards for widgets */
+        .info-cards-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: rgba(26, 21, 44, 0.45);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .info-card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-card-icon.cyan { color: var(--accent-cyan); border-color: rgba(0, 242, 254, 0.15); }
+        .info-card-icon.purple { color: var(--accent-purple); border-color: rgba(138, 43, 226, 0.15); }
+        
+        .info-card-text h4 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-card-text p {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            height: 8px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-bar.cyan {
+            background: linear-gradient(to right, var(--accent-cyan), #00b0ff);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        .progress-bar.purple {
+            background: linear-gradient(to right, var(--accent-purple), var(--accent-pink));
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-area">
+                <h1>DevOps Load Test Portal</h1>
+                <p>Nền tảng kiểm thử tải & Giám sát tài nguyên Pods thời gian thực</p>
+            </div>
+            <div class="server-status">
+                <div class="status-dot" id="server-status-dot"></div>
+                <span id="server-status-text">Đang kết nối...</span>
+            </div>
+        </header>
+
+        <!-- OS & Server Metadata Row -->
+        <div class="info-cards-row">
+            <div class="info-card">
+                <div class="info-card-icon cyan">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                </div>
+                <div class="info-card-text" style="width: 100%;">
+                    <h4>Hệ Điều Hành Server</h4>
+                    <p id="srv-os">Đang tải...</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon purple">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+                </div>
+                <div class="info-card-text" style="width: 100%;">
+                    <h4>Thời gian Uptime</h4>
+                    <p id="srv-uptime">Đang tải...</p>
+                </div>
+            </div>
+            <div class="info-card" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;">
+                    <div style="font-weight: 500; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">Tải CPU hiện tại: <span id="cpu-text-val">0%</span></div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar cyan" id="cpu-progress" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="info-card" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;">
+                    <div style="font-weight: 500; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">Sử dụng RAM: <span id="ram-text-val">0%</span></div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar purple" id="ram-progress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Layout -->
+        <div class="dashboard-grid">
+            <!-- Left Side: Control Panel -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                    Bộ Điều Khiển Load Test
+                </h2>
+
+                <div class="form-group">
+                    <label for="endpoint-select">Đường dẫn kiểm thử (Endpoint)</label>
+                    <select id="endpoint-select" class="input-control">
+                        <option value="/compute">/compute (Tốn nhiều CPU - Thuật toán Fibonacci)</option>
+                        <option value="/healthz">/healthz (Nhẹ - Kiểm tra sức khỏe hệ thống)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="complexity-group">
+                    <label for="fib-n">Độ phức tạp Fibonacci (n: 1 - 35)</label>
+                    <input type="number" id="fib-n" class="input-control" value="28" min="1" max="35">
+                    <span style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; display: block;">n càng lớn, thời gian xử lý của CPU càng tăng theo cấp số nhân.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="vu-count">Số lượng Users đồng thời (Concurrency / VUs)</label>
+                    <input type="number" id="vu-count" class="input-control" value="5" min="1" max="50">
+                </div>
+
+                <div class="form-group">
+                    <label for="req-delay">Độ trễ giữa các request (ms)</label>
+                    <input type="number" id="req-delay" class="input-control" value="100" min="0" max="5000">
+                </div>
+
+                <button id="test-btn" class="btn btn-primary" style="margin-top: 1rem;">
+                    Bắt đầu Stress Test
+                </button>
+
+                <h3 style="font-size: 1rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.5rem; color: var(--text-secondary);">Log hệ thống:</h3>
+                <div class="console-panel" id="log-console">
+                    <div class="console-line info">[Khởi động] Dashboard đã sẵn sàng.</div>
+                </div>
+            </div>
+
+            <!-- Right Side: Charts and Live Metrics -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <!-- System Resource Monitor -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                        Giám sát Tài nguyên Server (Pods) thời gian thực
+                    </h2>
+                    <div class="chart-container">
+                        <canvas id="sysResourceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Load Test Metrics -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        Biểu đồ Tốc độ Requests & Thời gian phản hồi
+                    </h2>
+
+                    <!-- Live performance numbers -->
+                    <div class="metrics-summary-grid">
+                        <div class="metric-badge">
+                            <div class="metric-badge-label">Requests/Giây (RPS)</div>
+                            <div class="metric-badge-value cyan" id="rps-val">0</div>
+                        </div>
+                        <div class="metric-badge">
+                            <div class="metric-badge-label">Latency Trung bình</div>
+                            <div class="metric-badge-value purple" id="latency-val">0 ms</div>
+                        </div>
+                        <div class="metric-badge">
+                            <div class="metric-badge-label">Thành công (200 OK)</div>
+                            <div class="metric-badge-value success" id="success-val">0</div>
+                        </div>
+                        <div class="metric-badge">
+                            <div class="metric-badge-label">Thất bại (Lỗi/Timeout)</div>
+                            <div class="metric-badge-value pink" id="fail-val">0</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables & elements
+        const consoleEl = document.getElementById('log-console');
+        const testBtn = document.getElementById('test-btn');
+        const srvOsEl = document.getElementById('srv-os');
+        const srvUptimeEl = document.getElementById('srv-uptime');
+        const serverStatusDot = document.getElementById('server-status-dot');
+        const serverStatusText = document.getElementById('server-status-text');
+
+        const cpuTextVal = document.getElementById('cpu-text-val');
+        const cpuProgress = document.getElementById('cpu-progress');
+        const ramTextVal = document.getElementById('ram-text-val');
+        const ramProgress = document.getElementById('ram-progress');
+
+        const rpsValEl = document.getElementById('rps-val');
+        const latencyValEl = document.getElementById('latency-val');
+        const successValEl = document.getElementById('success-val');
+        const failValEl = document.getElementById('fail-val');
+
+        const complexityGroup = document.getElementById('complexity-group');
+        const endpointSelect = document.getElementById('endpoint-select');
+
+        // Toggle complexity input visibility based on endpoint select
+        endpointSelect.addEventListener('change', () => {
+            if (endpointSelect.value === '/healthz') {
+                complexityGroup.style.display = 'none';
+            } else {
+                complexityGroup.style.display = 'block';
+            }
+        });
+
+        // Logger function
+        function log(message, type = 'info') {
+            const timeStr = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = `console-line ${type}`;
+            div.textContent = `[${timeStr}] ${message}`;
+            consoleEl.appendChild(div);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        // Initialize Charts
+        const sysCtx = document.getElementById('sysResourceChart').getContext('2d');
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+
+        // Common Chart Config options
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { color: '#a0aec0' }
+                },
+                y: {
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { color: '#a0aec0' }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: '#ffffff', font: { family: 'Outfit' } }
+                }
+            }
+        };
+
+        const sysResourceChart = new Chart(sysCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'CPU (%)',
+                        borderColor: '#00f2fe',
+                        backgroundColor: 'rgba(0, 242, 254, 0.1)',
+                        data: [],
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'RAM (%)',
+                        borderColor: '#8a2be2',
+                        backgroundColor: 'rgba(138, 43, 226, 0.1)',
+                        data: [],
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: sysOptions = {
+                ...chartOptions,
+                scales: {
+                    ...chartOptions.scales,
+                    y: {
+                        ...chartOptions.scales.y,
+                        min: 0,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        const performanceChart = new Chart(perfCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'RPS (Tốc độ)',
+                        borderColor: '#00f2fe',
+                        yAxisID: 'yRps',
+                        data: [],
+                        borderWidth: 2,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Avg Latency (ms)',
+                        borderColor: '#ff007f',
+                        yAxisID: 'yLatency',
+                        data: [],
+                        borderWidth: 2,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                ...chartOptions,
+                scales: {
+                    x: chartOptions.scales.x,
+                    yRps: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: 'Requests / Giây', color: '#00f2fe' },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#00f2fe' },
+                        min: 0
+                    },
+                    yLatency: {
+                        type: 'linear',
+                        position: 'right',
+                        title: { display: true, text: 'Độ trễ (ms)', color: '#ff007f' },
+                        grid: { drawOnChartArea: false }, // only show grid for left axis
+                        ticks: { color: '#ff007f' },
+                        min: 0
+                    }
+                }
+            }
+        });
+
+        // Polling metrics loop
+        let metricsHistoryLimit = 20;
+        let uptimeCounter = 0;
+
+        function updateSystemMetrics() {
+            fetch('/api/metrics')
+                .then(res => res.json())
+                .then(data => {
+                    // Update server connection status
+                    serverStatusDot.style.backgroundColor = 'var(--success-color)';
+                    serverStatusDot.style.boxShadow = '0 0 10px var(--success-color)';
+                    serverStatusText.textContent = 'Server Online';
+
+                    // Update UI text values
+                    srvOsEl.textContent = data.os_info;
+                    
+                    // Format uptime
+                    const hours = Math.floor(data.uptime_seconds / 3600);
+                    const minutes = Math.floor((data.uptime_seconds % 3600) / 60);
+                    const seconds = Math.floor(data.uptime_seconds % 60);
+                    srvUptimeEl.textContent = `${hours}h ${minutes}m ${seconds}s`;
+
+                    cpuTextVal.textContent = `${data.cpu_percent}%`;
+                    cpuProgress.style.width = `${data.cpu_percent}%`;
+                    ramTextVal.textContent = `${data.ram_percent}% (${data.ram_used_gb.toFixed(2)} / ${data.ram_total_gb.toFixed(2)} GB)`;
+                    ramProgress.style.width = `${data.ram_percent}%`;
+
+                    // Update metrics chart
+                    const timeLabel = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    
+                    // Add label
+                    sysResourceChart.data.labels.push(timeLabel);
+                    sysResourceChart.data.datasets[0].data.push(data.cpu_percent);
+                    sysResourceChart.data.datasets[1].data.push(data.ram_percent);
+
+                    // Shift data if array size limit exceeded
+                    if (sysResourceChart.data.labels.length > metricsHistoryLimit) {
+                        sysResourceChart.data.labels.shift();
+                        sysResourceChart.data.datasets[0].data.shift();
+                        sysResourceChart.data.datasets[1].data.shift();
+                    }
+
+                    sysResourceChart.update('none'); // silent update without animation lag
+                })
+                .catch(err => {
+                    serverStatusDot.style.backgroundColor = 'var(--danger-color)';
+                    serverStatusDot.style.boxShadow = '0 0 10px var(--danger-color)';
+                    serverStatusText.textContent = 'Server Offline';
+                    log(`Mất kết nối tới máy chủ API: ${err.message}`, 'error');
+                });
+        }
+
+        // Start server metrics polling immediately and repeat every second
+        updateSystemMetrics();
+        setInterval(updateSystemMetrics, 1000);
+
+        // Client-side Load Generator Logic
+        let isTesting = false;
+        let successCount = 0;
+        let failCount = 0;
+        let totalLatency = 0;
+        let recentLatencies = [];
+        let requestsInLastSecond = 0;
+        let testStartTime = null;
+        let activeWorkers = [];
+
+        // Performance charting update interval
+        let perfIntervalId = null;
+
+        function updatePerformanceStats() {
+            if (!isTesting) return;
+
+            const rps = requestsInLastSecond;
+            requestsInLastSecond = 0; // reset for next second
+
+            // Calculate average latency
+            let avgLatency = 0;
+            if (recentLatencies.length > 0) {
+                avgLatency = Math.round(recentLatencies.reduce((a, b) => a + b, 0) / recentLatencies.length);
+                recentLatencies = []; // clear
+            }
+
+            // Update UI elements
+            rpsValEl.textContent = rps;
+            latencyValEl.textContent = `${avgLatency} ms`;
+            successValEl.textContent = successCount;
+            failValEl.textContent = failCount;
+
+            // Update charts
+            const timeLabel = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            performanceChart.data.labels.push(timeLabel);
+            performanceChart.data.datasets[0].data.push(rps);
+            performanceChart.data.datasets[1].data.push(avgLatency);
+
+            if (performanceChart.data.labels.length > metricsHistoryLimit) {
+                performanceChart.data.labels.shift();
+                performanceChart.data.datasets[0].data.shift();
+                performanceChart.data.datasets[1].data.shift();
+            }
+            performanceChart.update('none');
+        }
+
+        async function requestWorker(targetUrl, delay) {
+            while (isTesting) {
+                const start = performance.now();
+                requestsInLastSecond++;
+                try {
+                    const response = await fetch(targetUrl);
+                    const duration = performance.now() - start;
+                    recentLatencies.push(duration);
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                } catch (err) {
+                    failCount++;
+                }
+
+                if (delay > 0) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        function startStressTest() {
+            const endpoint = endpointSelect.value;
+            const n = document.getElementById('fib-n').value;
+            const vus = parseInt(document.getElementById('vu-count').value) || 5;
+            const delay = parseInt(document.getElementById('req-delay').value) || 100;
+
+            const targetUrl = endpoint === '/compute' ? `${endpoint}?n=${n}` : endpoint;
+
+            isTesting = true;
+            successCount = 0;
+            failCount = 0;
+            recentLatencies = [];
+            requestsInLastSecond = 0;
+            testStartTime = Date.now();
+
+            log(`Khởi động test: Endpoint=${endpoint}, Concurrency=${vus} VUs, Delay=${delay}ms, Fibonacci(n)=${n || 'N/A'}`, 'info');
+            
+            // Adjust UI button style
+            testBtn.textContent = 'Dừng Stress Test';
+            testBtn.className = 'btn btn-danger';
+
+            // Start performance update timer (every 1s)
+            perfIntervalId = setInterval(updatePerformanceStats, 1000);
+
+            // Spawn asynchronous workers
+            activeWorkers = [];
+            for (let i = 0; i < vus; i++) {
+                activeWorkers.push(requestWorker(targetUrl, delay));
+            }
+        }
+
+        function stopStressTest() {
+            isTesting = false;
+            clearInterval(perfIntervalId);
+            log('Đã gửi tín hiệu dừng tới tất cả các Thread Virtual Users.', 'warn');
+            
+            testBtn.textContent = 'Đang dừng...';
+            testBtn.className = 'btn btn-disabled';
+            testBtn.disabled = true;
+
+            // Wait for all worker promises to exit loop
+            Promise.all(activeWorkers).then(() => {
+                log('Stress Test đã dừng hẳn.', 'info');
+                testBtn.textContent = 'Bắt đầu Stress Test';
+                testBtn.className = 'btn btn-primary';
+                testBtn.disabled = false;
+                
+                // Final reset of stats display to 0
+                rpsValEl.textContent = 0;
+                latencyValEl.textContent = '0 ms';
+            });
+        }
+
+        testBtn.addEventListener('click', () => {
+            if (isTesting) {
+                stopStressTest();
+            } else {
+                startStressTest();
+            }
+        });
+    </script>
+</body>
+</html>
+

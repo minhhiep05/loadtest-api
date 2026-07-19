@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadtest-deployment
+  labels:
+    app: loadtest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loadtest
+  template:
+    metadata:
+      labels:
+        app: loadtest
+    spec:
+      containers:
+      - name: loadtest-app
+        image: registry.gitlab.com/doanhiep169/loadtest-api
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "64Mi"
+          limits:
+            cpu: "500m"
+            memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadtest-service
+spec:
+  # ClusterIP thay vì LoadBalancer: cluster tự dựng bằng kubeadm không có
+  # cloud controller để cấp Load Balancer thật -> LoadBalancer sẽ kẹt ở
+  # trạng thái "pending" mãi mãi. Dùng Ingress (xem ingress.yaml) để expose
+  # ra ngoài qua domain riêng.
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: loadtest
+
