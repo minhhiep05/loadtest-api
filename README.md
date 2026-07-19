@@ -61,10 +61,10 @@ GitLab CI/CD: push code → build Docker image → push registry → deploy tự
 - HPA Auto-scaling: https://youtu.be/vFYXPUYhfiA
 - Self-healing (cordon/drain): https://youtu.be/7viwdsLyjOA
 
-#✅ 1. Cluster 2 node Ready
+### 1. Cluster 2 node Ready
 ![Nodes Ready](nodes-ready.png.png)
 
-#🔒 2. HTTPS Certificate hợp lệ
+### 2. HTTPS Certificate hợp lệ
 ![Certificate Ready](certificate-ready.png)
 
 ### 3. HPA tự động scale Pod theo tải CPU
