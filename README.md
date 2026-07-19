@@ -94,7 +94,7 @@ Khôi phục lại worker sau khi demo xong:
 ![node uncordon](node-uncordon.png)
 
 
-🔮 ## Định hướng cải thiện nếu triển khai Production:
+🔮 ## Định hướng cải thiện nếu triển khai Production
 
 Dự án này được xây dựng với mục đích học tập và demo các khái niệm cốt lõi của Kubernetes (auto-scaling, self-healing, CI/CD, giám sát). Nếu triển khai cho môi trường production thực tế, tôi nhận thấy cần bổ sung thêm:
 
