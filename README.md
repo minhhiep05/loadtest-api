@@ -32,6 +32,7 @@ GitLab CI/CD: push code → build Docker image → push registry → deploy tự
 | Package Manager | Helm |
 | Reverse Proxy / Ingress | nginx-ingress |
 | HTTPS tự động | cert-manager + Let's Encrypt |
+| Domain / DNS | Domain riêng, trỏ A record |
 | Giám sát | Prometheus, Grafana, kube-state-metrics, node-exporter |
 | CI/CD | GitLab CI/CD |
 | Load Testing | k6 |
