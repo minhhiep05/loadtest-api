@@ -92,6 +92,17 @@ Khôi phục lại worker sau khi demo xong:
 
 ![node uncordon](node-uncordon.png)
 
+## Định hướng cải thiện nếu triển khai Production
+
+Dự án này được xây dựng với mục đích học tập và demo các khái niệm cốt lõi của Kubernetes (auto-scaling, self-healing, CI/CD, giám sát). Nếu triển khai cho môi trường production thực tế, tôi nhận thấy cần bổ sung thêm:
+
+- **High Availability cho Control Plane**: hiện tại chỉ có 1 master node — cần multi-master để tránh single point of failure
+- **Backup & Disaster Recovery**: thêm cơ chế backup định kỳ cho etcd
+- **Tối ưu Resource Requests/Limits**: điều chỉnh lại giới hạn CPU/Memory sát với mức sử dụng thực tế đo được qua Grafana, tránh lãng phí hoặc thiếu hụt tài nguyên
+- **Network Policy & RBAC**: giới hạn traffic giữa các namespace, phân quyền truy cập chi tiết hơn
+- **Secret Management**: dùng Vault hoặc Sealed Secrets thay vì Kubernetes Secret mặc định
+- **Multi-node Worker**: mở rộng thêm worker node để chịu tải cao hơn và tránh phụ thuộc vào 1 node duy nhất
+
 ## Tác giả
 
 **Doan Minh Hiep**
