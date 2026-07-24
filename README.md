@@ -1,29 +1,29 @@
 [![pipeline status](https://gitlab.com/doanhiep169/loadtest-api/badges/main/pipeline.svg)](https://gitlab.com/doanhiep169/loadtest-api/-/commits/main)
 
 <details>
-<summary><strong>📑 Mục lục (bấm để xem)</strong></summary>
+<summary><strong>📑 Table of Contents (click to expand)</strong></summary>
 
-- 📌 [Giới thiệu](#gioi-thieu)
-- 🏗️ [Kiến trúc tổng quan](#kien-truc-tong-quan)
-- 🛠️ [Công nghệ sử dụng](#cong-nghe-su-dung)
-- 🎬 [Demo Video](#demo-video)
-- ✅ [1. Cluster 2 node Ready](#buoc-1)
-- 🔒 [2. HTTPS Certificate hợp lệ](#buoc-2)
-- 📈 [3. HPA tự động scale Pod theo tải CPU](#buoc-3)
-- 🚀 [4. GitLab CI/CD Pipeline chạy thành công](#buoc-4)
-- 📊 [5. Giám sát bằng Grafana + Prometheus](#buoc-5)
-- 🌐 [6. Giao diện Web Demo trực tiếp](#buoc-6)
-- 🔄 [7. Self-healing khi node gặp sự cố](#buoc-7)
-- 🔮 [Định hướng cải thiện nếu triển khai Production](#dinh-huong-cai-thien)
-- 👤 [Tác giả](#tac-gia)
+- 📌 [Introduction](#introduction)
+- 🏗️ [Architecture Overview](#architecture-overview)
+- 🛠️ [Technologies Used](#technologies-used)
+- 🎬 [Demo Videos](#demo-videos)
+- ✅ [1. 2-Node Cluster Ready](#step-1)
+- 🔒 [2. Valid HTTPS Certificate](#step-2)
+- 📈 [3. HPA Auto-scaling Pods based on CPU Load](#step-3)
+- 🚀 [4. Successful GitLab CI/CD Pipeline](#step-4)
+- 📊 [5. Monitoring with Grafana + Prometheus](#step-5)
+- 🌐 [6. Live Web Demo Interface](#step-6)
+- 🔄 [7. Self-healing on Node Failure](#step-7)
+- 🔮 [Future Production Improvements](#future-production-improvements)
+- 👤 [Author](#author)
 
 </details>
 
-<h2 id="gioi-thieu">📌 Giới thiệu</h2>
+<h2 id="introduction">📌 Introduction</h2>
 
-Dự án mô phỏng một hệ thống Kubernetes hoàn chỉnh gồm 2 node (master + worker), triển khai bằng kubeadm, có khả năng **tự động mở rộng (auto-scaling)** theo tải CPU thực tế và **tự phục hồi (self-healing)** khi node gặp sự cố. Toàn bộ quy trình build & deploy được tự động hóa qua GitLab CI/CD, truy cập qua domain riêng với HTTPS và giám sát real-time bằng Prometheus + Grafana.
+This project models a complete 2-node Kubernetes cluster (master + worker) deployed using kubeadm. It features **auto-scaling** based on real-time CPU load and **self-healing** capabilities in case of node failures. The entire build & deploy workflow is automated via a GitLab CI/CD pipeline, accessible through a custom domain with HTTPS, and monitored in real-time using Prometheus + Grafana.
 
-<h2 id="kien-truc-tong-quan">🏗️ Kiến trúc tổng quan</h2>
+<h2 id="architecture-overview">🏗️ Architecture Overview</h2>
 
 ```mermaid
 flowchart TB
@@ -68,7 +68,7 @@ flowchart TB
 
     User -->|"HTTPS
     app.domain.com"| Ingress
-    CertManager -.->|"cấp TLS cert"| Ingress
+    CertManager -.->|"issues TLS cert"| Ingress
     Ingress --> Service
     Service --> Pod1
     Service --> Pod2
@@ -82,7 +82,7 @@ flowchart TB
 
     Developer -->|"git push"| GitLab
     GitLab -->|"trigger"| Pipeline
-    Pipeline -->|"chạy job"| Runner
+    Pipeline -->|"runs job"| Runner
     Runner -->|"1. build & push"| Registry
     Runner -->|"2. kubectl set image
     (manual approve)"| Deployment
@@ -111,76 +111,76 @@ flowchart TB
 ```
 
 
-<h2 id="cong-nghe-su-dung">🛠️ Công nghệ sử dụng</h2>
+<h2 id="technologies-used">🛠️ Technologies Used</h2>
 
-| Thành phần | Công nghệ |
+| Component | Technology |
 |---|---|
 | Container Orchestration | Kubernetes (kubeadm), Calico (CNI) |
 | Containerization | Docker |
 | Package Manager | Helm |
 | Reverse Proxy / Ingress | nginx-ingress |
-| HTTPS tự động | cert-manager + Let's Encrypt |
-| Domain / DNS | Domain riêng, trỏ A record |
-| Giám sát | Prometheus, Grafana, kube-state-metrics, node-exporter |
+| Automatic HTTPS | cert-manager + Let's Encrypt |
+| Domain / DNS | Custom Domain, A record routing |
+| Monitoring | Prometheus, Grafana, kube-state-metrics, node-exporter |
 | CI/CD | GitLab CI/CD |
 | Load Testing | k6 |
-| Ứng dụng demo | Python (Flask) |
+| Demo Application | Python (Flask) |
 
-<h2 id="demo-video">🎬 Demo Video</h2>
+<h2 id="demo-videos">🎬 Demo Videos</h2>
 
 - HPA Auto-scaling: https://youtu.be/vFYXPUYhfiA
 - Self-healing (cordon/drain): https://youtu.be/7viwdsLyjOA
 
-<h2 id="buoc-1">✅ 1. Cluster 2 node Ready</h2>
+<h2 id="step-1">✅ 1. 2-Node Cluster Ready</h2>
 
 ![Nodes Ready](nodes-ready.png.png)
 
-<h2 id="buoc-2">🔒 2. HTTPS Certificate hợp lệ</h2>
+<h2 id="step-2">🔒 2. Valid HTTPS Certificate</h2>
 
 ![Certificate Ready](certificate-ready.png)
 
-<h2 id="buoc-3">📈 3. HPA tự động scale Pod theo tải CPU</h2>
+<h2 id="step-3">📈 3. HPA Auto-scaling Pods based on CPU Load</h2>
 
 ![HPA Scaling](hpa-scaling.png)
 
-<h2 id="buoc-4">🚀 4. GitLab CI/CD Pipeline chạy thành công</h2>
+<h2 id="step-4">🚀 4. Successful GitLab CI/CD Pipeline</h2>
 
 ![Pipeline Passed](pipeline-passed.png)
 
-<h2 id="buoc-5">📊 5. Giám sát bằng Grafana + Prometheus</h2>
+<h2 id="step-5">📊 5. Monitoring with Grafana + Prometheus</h2>
 
 ![Grafana Dashboard](grafana-dashboard.png)
 
-<h2 id="buoc-6">🌐 6. Giao diện Web Demo trực tiếp</h2>
+<h2 id="step-6">🌐 6. Live Web Demo Interface</h2>
 
 ![Web Demo](web-demo.png)
 
-<h2 id="buoc-7">🔄 7. Self-healing khi node gặp sự cố</h2>
+<h2 id="step-7">🔄 7. Self-healing on Node Failure</h2>
 
-Cô lập node worker (đánh dấu không nhận pod mới):
+Isolate the worker node (marking it as unschedulable):
 
 ![node cordon](node-cordon.png)
 
-Trục xuất toàn bộ pod ra khỏi worker:
+Evict all pods from the worker node:
 
 ![pod drain](pod-drain.png)
 
-Khôi phục lại worker sau khi demo xong:
+Restore the worker node after the demo:
 
 ![node uncordon](node-uncordon.png)
 
-<h2 id="dinh-huong-cai-thien">🔮 Định hướng cải thiện nếu triển khai Production</h2>
+<h2 id="future-production-improvements">🔮 Future Production Improvements</h2>
 
-Dự án này được xây dựng với mục đích học tập và demo các khái niệm cốt lõi của Kubernetes (auto-scaling, self-healing, CI/CD, giám sát). Nếu triển khai cho môi trường production thực tế, tôi nhận thấy cần bổ sung thêm:
+This project was built for educational and demonstration purposes to showcase the core concepts of Kubernetes (auto-scaling, self-healing, CI/CD, monitoring). If deploying to a production environment, I recognize the need to implement:
 
-- **High Availability cho Control Plane**: hiện tại chỉ có 1 master node — cần multi-master để tránh single point of failure
-- **Backup & Disaster Recovery**: thêm cơ chế backup định kỳ cho etcd
-- **Tối ưu Resource Requests/Limits**: điều chỉnh lại giới hạn CPU/Memory sát với mức sử dụng thực tế đo được qua Grafana, tránh lãng phí hoặc thiếu hụt tài nguyên
-- **Network Policy & RBAC**: giới hạn traffic giữa các namespace, phân quyền truy cập chi tiết hơn
-- **Secret Management**: dùng Vault hoặc Sealed Secrets thay vì Kubernetes Secret mặc định
-- **Multi-node Worker**: mở rộng thêm worker node để chịu tải cao hơn và tránh phụ thuộc vào 1 node duy nhất
+- **Control Plane High Availability**: Currently, there is only 1 master node — a multi-master setup is required to avoid a single point of failure.
+- **Backup & Disaster Recovery**: Implement periodic backups for etcd.
+- **Optimize Resource Requests/Limits**: Adjust CPU/Memory limits closer to actual usage measured via Grafana to avoid resource waste or shortages.
+- **Network Policy & RBAC**: Restrict traffic between namespaces and enforce fine-grained access control.
+- **Secret Management**: Utilize Vault or Sealed Secrets instead of the default Kubernetes Secrets.
+- **Multi-node Worker**: Scale out with more worker nodes to handle higher loads and avoid dependency on a single node.
 
-<h2 id="tac-gia">👤 Tác giả</h2>
+<h2 id="author">👤 Author</h2>
 
 **Doan Minh Hiep**
 
