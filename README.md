@@ -24,7 +24,6 @@
 Dự án mô phỏng một hệ thống Kubernetes hoàn chỉnh gồm 2 node (master + worker), triển khai bằng kubeadm, có khả năng **tự động mở rộng (auto-scaling)** theo tải CPU thực tế và **tự phục hồi (self-healing)** khi node gặp sự cố. Toàn bộ quy trình build & deploy được tự động hóa qua GitLab CI/CD, truy cập qua domain riêng với HTTPS và giám sát real-time bằng Prometheus + Grafana.
 
 <h2 id="kien-truc-tong-quan">🏗️ Kiến trúc tổng quan</h2>
-
 ```
 Người dùng
    │
