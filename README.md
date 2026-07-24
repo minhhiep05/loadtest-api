@@ -23,7 +23,7 @@
 - 🌐 [6. Live Web Demo Interface](#step-6)
 - 🔄 [7. Self-healing Verification](#step-7)
 - ⚠️ [Troubleshooting & Lessons Learned](#troubleshooting-lessons-learned)
-- 🔮 [Future Production Improvements](#future-production-improvements)
+- 🔮 [Production Gaps & Future Improvements](#future-production-improvements)
 - 👤 [Author](#author)
 
 </details>
@@ -34,7 +34,7 @@
 
 This repository contains a complete GitOps implementation of a **2-node Kubernetes cluster** (Master + Worker) deployed on AWS EC2 using `kubeadm`. 
 
-The project demonstrates production-grade DevOps patterns, including **Horizontal Pod Autoscaling (HPA)** triggered by CPU load, **Self-healing infrastructure** during worker node maintenance, a fully automated **GitLab CI/CD pipeline** (build & push to Container Registry with manual deployment gating), secure ingress routing via **HTTPS/TLS** (cert-manager & Let's Encrypt), and full-stack observability with **Prometheus & Grafana**.
+The project demonstrates robust DevOps patterns in a self-managed cluster, including **Horizontal Pod Autoscaling (HPA)** triggered by CPU load, **Self-healing infrastructure** during worker node maintenance, a fully automated **GitLab CI/CD pipeline** (build & push to Container Registry with manual deployment gating), secure ingress routing via **HTTPS/TLS** (cert-manager & Let's Encrypt), and full-stack observability with **Prometheus & Grafana**.
 
 ---
 
@@ -143,7 +143,7 @@ flowchart TB
 loadtest-api/
 ├── .gitlab-ci.yml          # GitLab CI/CD Pipeline pipeline stages (build/deploy)
 ├── app.py                  # Flask API containing CPU-heavy Fibonacci endpoints
-├── Dockerfile              # Multi-stage production container image build
+├── Dockerfile              # Optimized multi-stage container image build
 ├── docker-compose.yml      # Local development and container testing stack
 ├── loadtest.js             # k6 JavaScript load testing target scenario
 ├── requirements.txt        # Python dependency manifest
@@ -275,7 +275,7 @@ The live user interface features real-time performance graphs powered by Chart.j
 
 <h2 id="troubleshooting-lessons-learned">⚠️ Troubleshooting & Lessons Learned</h2>
 
-Building and running a self-managed cluster introduces several production hurdles. Below are the key issues identified and resolved during this deployment:
+Building and running a self-managed cluster introduces several real-world deployment challenges. Below are the key issues identified and resolved during this deployment:
 
 ### 1. Hardware Instability (`t3.micro` vs `t3.medium`)
 *   **Problem**: Nodes randomly entered the `NotReady` state under high CPU stress testing. Kubelet stopped posting node status.
@@ -303,7 +303,7 @@ Building and running a self-managed cluster introduces several production hurdle
 
 ---
 
-<h2 id="future-production-improvements">🔮 Future Production Improvements</h2>
+<h2 id="future-production-improvements">🔮 Production Gaps & Future Improvements</h2>
 
 This project was built for educational and portfolio demonstration purposes. In a real-world production system, the following practices should be introduced:
 
