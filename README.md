@@ -34,7 +34,7 @@
 
 This repository contains a complete GitOps implementation of a **2-node Kubernetes cluster** (Master + Worker) deployed on AWS EC2 using `kubeadm`. 
 
-The project demonstrates robust DevOps patterns in a self-managed cluster, including **Horizontal Pod Autoscaling (HPA)** triggered by CPU load, **Self-healing infrastructure** during worker node maintenance, a fully automated **GitLab CI/CD pipeline** (build & push to Container Registry with manual deployment gating), secure ingress routing via **HTTPS/TLS** (cert-manager & Let's Encrypt), and full-stack observability with **Prometheus & Grafana**.
+The project demonstrates robust DevOps patterns in a self-managed cluster, including **Horizontal Pod Autoscaling (HPA)** triggered by CPU load, **Self-healing infrastructure** during worker node maintenance, a fully automated **GitLab CI/CD pipeline** (build & push to Container Registry with manual deployment gating), secure ingress routing via **HTTPS/TLS** (cert-manager & Let's Encrypt) and full-stack observability with **Prometheus & Grafana**.
 
 ---
 
