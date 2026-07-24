@@ -16,7 +16,7 @@
 - 🎬 [Demo Videos](#demo-videos)
 - 💻 [Quick Start](#quick-start)
 - ✅ [1. 2-Node Cluster Status](#step-1)
-- 🔒 [2. Valid HTTPS Certificate](#step-2)
+- 🔒 [2. Custom Domain & Valid HTTPS Certificate](#step-2)
 - 📈 [3. HPA Auto-scaling Pods](#step-3)
 - 🚀 [4. GitLab CI/CD Pipeline](#step-4)
 - 📊 [5. Monitoring Dashboard](#step-5)
@@ -40,7 +40,7 @@ The project demonstrates production-grade DevOps patterns, including **Horizonta
 
 <h2 id="key-features">🚀 Key Features</h2>
 
-*   🛡️ **Automated End-to-End TLS**: Zero-configuration HTTPS certificate provisioning and renewal via `cert-manager` and Let's Encrypt.
+*   🛡️ **Custom Domain & TLS Ingress Routing**: Dynamic traffic routing using a custom domain (`app.yourdomain.com` and `grafana.yourdomain.com`) with automated SSL/TLS termination via `cert-manager` and Let's Encrypt.
 *   ⚖️ **Dynamic Auto-Scaling**: Horizontal Pod Autoscaler (HPA) dynamically scales Flask app instances between 1 and 5 replicas based on real-time CPU utilization metrics.
 *   🔄 **Infrastructure Self-Healing**: Zero-downtime node drain (`cordon`/`drain`) demo where Pods are automatically evicted and rescheduled on healthy nodes.
 *   🚀 **GitOps-driven CI/CD**: Automatic Docker image builds on code changes, pushed to GitLab Registry, and deployed to Kubernetes with manual approval gates.
@@ -145,7 +145,7 @@ loadtest-api/
 ├── app.py                  # Flask API containing CPU-heavy Fibonacci endpoints
 ├── Dockerfile              # Multi-stage production container image build
 ├── docker-compose.yml      # Local development and container testing stack
-├── loadtest.js             # k6 JavaScript load testing target scenario
+├── loadtest.js            # k6 JavaScript load testing target scenario
 ├── requirements.txt        # Python dependency manifest
 ├── k8s/                    # Kubernetes declarative manifests
 │   ├── deployment.yaml     # Application deployment and ClusterIP service definitions
@@ -192,7 +192,7 @@ Click on the cards below to view the video demonstrations on YouTube:
 * `k6` installed locally for stress testing
 
 ### Step 1: Deploy Manifests
-Deploy the core application stack, including Ingress, Service, Deployment and HPA:
+Deploy the core application stack, including Ingress, Service, Deployment, and HPA:
 ```bash
 kubectl apply -f k8s/
 ```
@@ -215,11 +215,15 @@ kubectl get hpa loadtest-hpa -w
 
 Verify that both nodes are successfully bootstrapped and in `Ready` state:
 
-![Nodes Ready](nodes-ready.png.png)
+![Nodes Ready](nodes-ready.png)
 
-<h2 id="step-2">🔒 2. Valid HTTPS Certificate</h2>
+<h2 id="step-2">🔒 2. Custom Domain & Valid HTTPS Certificate</h2>
 
-Check the status of the SSL certificate issued via cert-manager:
+The cluster exposes services securely over the public internet using custom domains pointing to the ingress controller:
+*   **Flask Web App**: `https://app.yourdomain.com`
+*   **Grafana Dashboards**: `https://grafana.yourdomain.com`
+
+SSL/TLS certificates are automatically provisioned, validated, and renewed by `cert-manager` using Let's Encrypt HTTP-01 challenges. Verify the certificate status:
 
 ![Certificate Ready](certificate-ready.png)
 
