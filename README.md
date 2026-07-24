@@ -25,22 +25,67 @@ Dự án mô phỏng một hệ thống Kubernetes hoàn chỉnh gồm 2 node (m
 
 <h2 id="kien-truc-tong-quan">🏗️ Kiến trúc tổng quan</h2>
 
-```
-Người dùng
-   │
-   ▼
-HTTPS (nginx-ingress + cert-manager)
-   │
-   ▼
-Service (ClusterIP)
-   │
-   ▼
-Pod (Flask app) ←── HPA tự động scale theo % CPU
-   │
-   ▼
-Prometheus (scrape metrics) ──▶ Grafana (dashboard giám sát)
+```mermaid
+flowchart TB
 
-GitLab CI/CD: push code → build Docker image → push registry → deploy tự động lên cluster
+    User([👤 Users])
+
+    subgraph Internet
+
+        Ingress["NGINX Ingress
+        cert-manager"]
+
+    end
+
+    subgraph Kubernetes Cluster
+
+        Service["ClusterIP Service"]
+
+        subgraph Deployment
+
+            Pod1["Flask Pod"]
+
+            Pod2["Flask Pod"]
+
+            Pod3["Flask Pod"]
+
+        end
+
+        HPA["Horizontal Pod Autoscaler"]
+
+        Prom["Prometheus"]
+
+        Grafana["Grafana"]
+
+    end
+
+    User -->|HTTPS| Ingress
+
+    Ingress --> Service
+
+    Service --> Deployment
+
+    HPA -. Scale .-> Deployment
+
+    Deployment --> Prom
+
+    Prom --> Grafana
+
+    Developer([Developer])
+
+    GitLab["GitLab Repository"]
+
+    Pipeline["GitLab CI/CD"]
+
+    Registry["Container Registry"]
+
+    Developer --> GitLab
+
+    GitLab --> Pipeline
+
+    Pipeline --> Registry
+
+    Registry --> Deployment
 ```
 
 
