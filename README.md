@@ -44,7 +44,7 @@ The project demonstrates robust DevOps patterns in a self-managed cluster, inclu
 *   🛡️ **Custom Domain & TLS Ingress Routing**: Dynamic traffic routing using a custom domain (`app.yourdomain.com` and `grafana.yourdomain.com`) with automated SSL/TLS termination via `cert-manager` and Let's Encrypt.
 *   ⚖️ **Dynamic Auto-Scaling**: Horizontal Pod Autoscaler (HPA) dynamically scales Flask app instances between 1 and 5 replicas based on real-time CPU utilization metrics.
 *   🔄 **Infrastructure Self-Healing**: Zero-downtime node drain (`cordon`/`drain`) demo where Pods are automatically evicted and rescheduled on healthy nodes.
-*   🚀 **GitOps-driven CI/CD**: Automatic Docker image builds on code changes, pushed to GitLab Registry, and deployed to Kubernetes with manual approval gates.
+*   🚀 **GitOps-driven CI/CD**: Automatic Docker image builds on code changes, pushed to GitLab Registry and deployed to Kubernetes with manual approval gates.
 *   📊 **Observability Stack**: Real-time cluster metrics collection and visualization using Helm-deployed Prometheus Operator and Grafana.
 
 ---
@@ -270,7 +270,7 @@ The cluster exposes services securely over the public internet using custom doma
 
 SSL/TLS certificates are automatically provisioned, validated, and renewed by `cert-manager` using Let's Encrypt HTTP-01 challenges. Verify the certificate status:
 
-![Certificate Ready](certificate-ready.png)
+![Certificate Ready](certificate-ready.png.png)
 
 <h2 id="step-3">📈 3. HPA Auto-scaling Pods</h2>
 
@@ -280,7 +280,7 @@ Watch the pods scaling dynamically as the CPU metrics hit the target threshold:
 
 <h2 id="step-4">🚀 4. GitLab CI/CD Pipeline</h2>
 
-The continuous integration pipeline automates Docker builds, Registry push, and rolling update triggers:
+The continuous integration pipeline automates Docker builds, Registry push and rolling update triggers:
 
 ![Pipeline Passed](pipeline-passed.png)
 
@@ -330,7 +330,7 @@ Building and running a self-managed cluster introduces several real-world deploy
 ### 2. Private Container Registry Authentication (`ImagePullBackOff`)
 *   **Problem**: Kubernetes Pods failed to download the application image with the error `ImagePullBackOff`.
 *   **Root Cause**: The GitLab Container Registry containing the built images was set to Private, blocking Kubernetes' pull requests.
-*   **Fix**: Generated a GitLab Personal Access Token, registered it as a Kubernetes Registry Secret, and configured the deployment YAML with the corresponding `imagePullSecrets` manifest configuration:
+*   **Fix**: Generated a GitLab Personal Access Token, registered it as a Kubernetes Registry Secret and configured the deployment YAML with the corresponding `imagePullSecrets` manifest configuration:
     ```yaml
     spec:
       imagePullSecrets:
@@ -356,7 +356,7 @@ This project was built for educational and portfolio demonstration purposes. In 
 - **Automated Backups**: Schedule regular snapshot backups of the `etcd` datastore using tools like `etcdctl` or Velero.
 - **Resource Constraints Tuning**: Continuously profile resource requests/limits using Grafana historical data to prevent OOM errors or wasteful over-provisioning.
 - **Network Policies & RBAC**: Apply fine-grained Namespace Isolation policies and Kubernetes RBAC permissions to enforce the principle of least privilege.
-- **Secret Management Integration**: Replace default Base64 K8s Secrets with a secure external manager like HashiCorp Vault, AWS Secrets Manager, or Sealed Secrets.
+- **Secret Management Integration**: Replace default Base64 K8s Secrets with a secure external manager like HashiCorp Vault, AWS Secrets Manager or Sealed Secrets.
 - **Multi-AZ Worker Allocation**: Ensure worker nodes are spread across multiple Availability Zones (AZs) for physical hardware redundancy.
 
 ---
