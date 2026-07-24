@@ -1,4 +1,4 @@
-# ☸️ Production-Ready Kubernetes Cluster Auto-Scaling & CI/CD Demo
+# ☸️ Kubernetes HPA Auto-Scaling & Self-Healing with GitLab CI/CD
 
 [![GitLab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/doanhiep169/loadtest-api?branch=main&style=for-the-badge&logo=gitlab&logoColor=white)](https://gitlab.com/doanhiep169/loadtest-api/-/commits/main)
 [![Kubernetes Version](https://img.shields.io/badge/kubernetes-v1.30-blue?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
