@@ -260,7 +260,7 @@ kubectl get hpa loadtest-hpa -w
 
 Verify that both nodes are successfully bootstrapped and in `Ready` state:
 
-![Nodes Ready](nodes-ready.png)
+![Nodes Ready](nodes-ready.png.png)
 
 <h2 id="step-2">🔒 2. Custom Domain & Valid HTTPS Certificate</h2>
 
@@ -268,9 +268,9 @@ The cluster exposes services securely over the public internet using custom doma
 *   **Flask Web App**: `https://app.yourdomain.com`
 *   **Grafana Dashboards**: `https://grafana.yourdomain.com`
 
-SSL/TLS certificates are automatically provisioned, validated, and renewed by `cert-manager` using Let's Encrypt HTTP-01 challenges. Verify the certificate status:
+SSL/TLS certificates are automatically provisioned, validated and renewed by `cert-manager` using Let's Encrypt HTTP-01 challenges. Verify the certificate status:
 
-![Certificate Ready](certificate-ready.png.png)
+![Certificate Ready](certificate-ready.png)
 
 <h2 id="step-3">📈 3. HPA Auto-scaling Pods</h2>
 
