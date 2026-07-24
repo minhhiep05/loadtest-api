@@ -146,7 +146,7 @@ loadtest-api/
 ├── app.py                  # Flask API containing CPU-heavy Fibonacci endpoints
 ├── Dockerfile              # Optimized multi-stage container image build
 ├── docker-compose.yml      # Local development and container testing stack
-├── loadtest.js            # k6 JavaScript load testing target scenario
+├── loadtest.js             # k6 JavaScript load testing target scenario
 ├── requirements.txt        # Python dependency manifest
 ├── k8s/                    # Kubernetes declarative manifests
 │   ├── deployment.yaml     # Application deployment and ClusterIP service definitions
