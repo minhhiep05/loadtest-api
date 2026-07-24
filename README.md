@@ -25,23 +25,57 @@ Dự án mô phỏng một hệ thống Kubernetes hoàn chỉnh gồm 2 node (m
 
 <h2 id="kien-truc-tong-quan">🏗️ Kiến trúc tổng quan</h2>
 
-```
-Người dùng
-   │
-   ▼
-HTTPS (nginx-ingress + cert-manager)
-   │
-   ▼
-Service (ClusterIP)
-   │
-   ▼
-Pod (Flask app) ←── HPA tự động scale theo % CPU
-   │
-   ▼
-Prometheus (scrape metrics) ──▶ Grafana (dashboard giám sát)
+```mermaid
+graph TD
+    %% Định nghĩa các style màu sắc chuyên nghiệp
+    classDef userStyle fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#fff;
+    classDef ingressStyle fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff;
+    classDef k8sStyle fill:#8b5cf6,stroke:#6d28d9,stroke-width:2px,color:#fff;
+    classDef monitorStyle fill:#f59e0b,stroke:#b45309,stroke-width:2px,color:#fff;
+    classDef cicdStyle fill:#ec4899,stroke:#be185d,stroke-width:2px,color:#fff;
 
-GitLab CI/CD: push code → build Docker image → push registry → deploy tự động lên cluster
-```
+    %% Các thành phần trong hệ thống
+    User([👤 User / Client]):::userStyle
+    
+    subgraph Ingress Layer ["🌐 Ingress & Security Layer"]
+        Cert[Cert-Manager <br/> Let's Encrypt HTTPS]:::ingressStyle
+        Ingress[Nginx Ingress Controller]:::ingressStyle
+    end
+
+    subgraph K8sCluster ["☸️ Kubernetes Cluster (2 Nodes)"]
+        Service[ClusterIP Service]:::k8sStyle
+        Pod1[Flask App Pod 1]:::k8sStyle
+        Pod2[Flask App Pod 2 ...]:::k8sStyle
+        HPA[Horizontal Pod Autoscaler <br/> CPU Utilization > Threshold]:::k8sStyle
+    end
+
+    subgraph Monitoring ["📊 Observability Layer"]
+        Prometheus[Prometheus <br/> Scrape Metrics]:::monitorStyle
+        Grafana[Grafana Dashboard]:::monitorStyle
+    end
+
+    subgraph CICD ["🚀 Automation Pipeline"]
+        GitLab[GitLab CI/CD]:::cicdStyle
+        Registry[(Container Registry)]:::cicdStyle
+    end
+
+    %% Luồng đi của dữ liệu và request
+    User -->|HTTPS Request| Cert
+    Cert --> Ingress
+    Ingress -->|Route Traffic| Service
+    Service --> Pod1 & Pod2
+    
+    %% Mối quan hệ HPA và Pod
+    HPA -.->|Auto-scale pods| Pod1
+    HPA -.->|Auto-scale pods| Pod2
+
+    %% Luồng Monitoring
+    Prometheus -->|Collects metrics| Pod1 & Pod2
+    Prometheus --> Grafana
+
+    %% Luồng CI/CD
+    GitLab -->|Build & Push| Registry
+    Registry -->|Deploy updates| K8sCluster
 
 <h2 id="cong-nghe-su-dung">🛠️ Công nghệ sử dụng</h2>
 
