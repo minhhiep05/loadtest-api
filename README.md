@@ -193,7 +193,7 @@ kubectl get hpa loadtest-hpa -w
 
 Verify that both nodes are successfully bootstrapped and in `Ready` state:
 
-![Nodes Ready](nodes-ready.png)
+![Nodes Ready](nodes-ready.png.png)
 
 <h2 id="step-2">🔒 2. Valid HTTPS Certificate</h2>
 
