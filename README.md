@@ -14,6 +14,7 @@
 - 📁 [Project Structure](#project-structure)
 - 🛠️ [Technologies Used](#technologies-used)
 - 🎬 [Demo Videos](#demo-videos)
+- ☁️ [AWS Infrastructure Setup](#aws-infrastructure-setup)
 - 💻 [Quick Start](#quick-start)
 - ✅ [1. 2-Node Cluster Status](#step-1)
 - 🔒 [2. Custom Domain & Valid HTTPS Certificate](#step-2)
@@ -34,7 +35,7 @@
 
 This repository contains a complete GitOps implementation of a **2-node Kubernetes cluster** (Master + Worker) deployed on AWS EC2 using `kubeadm`. 
 
-The project demonstrates robust DevOps patterns in a self-managed cluster, including **Horizontal Pod Autoscaling (HPA)** triggered by CPU load, **Self-healing infrastructure** during worker node maintenance, a fully automated **GitLab CI/CD pipeline** (build & push to Container Registry with manual deployment gating), secure ingress routing via **HTTPS/TLS** (cert-manager & Let's Encrypt) and full-stack observability with **Prometheus & Grafana**.
+The project demonstrates robust DevOps patterns in a self-managed cluster, including **Horizontal Pod Autoscaling (HPA)** triggered by CPU load, **Self-healing infrastructure** during worker node maintenance, a fully automated **GitLab CI/CD pipeline** (build & push to Container Registry with manual deployment gating), secure ingress routing via **HTTPS/TLS** (cert-manager & Let's Encrypt), and full-stack observability with **Prometheus & Grafana**.
 
 ---
 
@@ -145,7 +146,7 @@ loadtest-api/
 ├── app.py                  # Flask API containing CPU-heavy Fibonacci endpoints
 ├── Dockerfile              # Optimized multi-stage container image build
 ├── docker-compose.yml      # Local development and container testing stack
-├── loadtest.js             # k6 JavaScript load testing target scenario
+├── loadtest.js            # k6 JavaScript load testing target scenario
 ├── requirements.txt        # Python dependency manifest
 ├── k8s/                    # Kubernetes declarative manifests
 │   ├── deployment.yaml     # Application deployment and ClusterIP service definitions
@@ -161,6 +162,7 @@ loadtest-api/
 
 | Component | Technology / Badge | Description |
 |---|---|---|
+| **Cloud Provider** | ![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white) | EC2 infrastructure (t3.medium instances) hosting the Kubernetes cluster |
 | **Orchestration** | ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white) | Cluster bootstrapped via `kubeadm`, CNI powered by Calico |
 | **Container Engine** | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) | Application builds packaged via Docker multi-stage Dockerfiles |
 | **Package Management** | ![Helm](https://img.shields.io/badge/Helm-0F1626?style=flat-square&logo=helm&logoColor=white) | Helm charts used for deploying Ingress and the Prometheus Stack |
@@ -181,6 +183,49 @@ Click on the cards below to view the video demonstrations on YouTube:
 | 📈 HPA Auto-scaling Demo | 🔄 Self-healing (Cordon/Drain) Demo |
 | :---: | :---: |
 | [![HPA Auto-scaling Demo](https://img.youtube.com/vi/vFYXPUYhfiA/0.jpg)](https://youtu.be/vFYXPUYhfiA) | [![Self-healing Demo](https://img.youtube.com/vi/7viwdsLyjOA/0.jpg)](https://youtu.be/7viwdsLyjOA) |
+
+---
+
+<h2 id="aws-infrastructure-setup">☁️ AWS Infrastructure & Kubernetes Bootstrapping</h2>
+
+Before deploying the Kubernetes manifests, the underlying infrastructure must be provisioned on AWS, and the Kubernetes cluster bootstrapped using `kubeadm`.
+
+### 1. AWS EC2 Instance Provisioning
+Create 2 EC2 Instances with the following configuration:
+* **AMI**: Ubuntu Server 22.04 LTS
+* **Instance Type**: `t3.medium` (Minimum requirement: 2 vCPUs, 4GB RAM)
+* **Storage**: 20-30 GB gp3
+* **Names**: `k8s-master` and `k8s-worker`
+* **Key Pair**: `k8s-lab-key.pem`
+
+### 2. Security Group Configuration (`k8s-lab-sg`)
+Create a security group and attach it to both instances with the following inbound rules:
+* SSH (Port `22`) -> `My IP` (for management access)
+* HTTP (Port `80`) -> `0.0.0.0/0` (for web traffic & Let's Encrypt validation)
+* HTTPS (Port `443`) -> `0.0.0.0/0` (for secure web traffic)
+* K8s API Server (Port `6443`) -> `k8s-lab-sg` (self-referencing)
+* etcd (Ports `2379-2380`) -> `k8s-lab-sg`
+* Kubelet/Control Plane (Ports `10250-10252`) -> `k8s-lab-sg`
+* NodePort Range (Ports `30000-32767`) -> `My IP` (optional, for debugging)
+
+### 3. Kubernetes Cluster Bootstrap
+1. **Prepare Nodes**: Run the pre-requisite script (disabling swap, configuring sysctl, installing `containerd` and Kubernetes packages `kubeadm`, `kubelet`, `kubectl`) on **both** master and worker nodes.
+2. **Initialize Master Node**:
+   ```bash
+   sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=<MASTER_PRIVATE_IP>
+   ```
+3. **Configure kubectl on Master**:
+   ```bash
+   mkdir -p $HOME/.kube
+   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   ```
+4. **Deploy Pod Network (Calico)**:
+   ```bash
+   kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
+   kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml
+   ```
+5. **Join Worker Node**: Run the `kubeadm join` command generated by `kubeadm init` on the worker node.
 
 ---
 
@@ -215,7 +260,7 @@ kubectl get hpa loadtest-hpa -w
 
 Verify that both nodes are successfully bootstrapped and in `Ready` state:
 
-![Nodes Ready](nodes-ready.png.png)
+![Nodes Ready](nodes-ready.png)
 
 <h2 id="step-2">🔒 2. Custom Domain & Valid HTTPS Certificate</h2>
 
@@ -235,7 +280,7 @@ Watch the pods scaling dynamically as the CPU metrics hit the target threshold:
 
 <h2 id="step-4">🚀 4. GitLab CI/CD Pipeline</h2>
 
-The continuous integration pipeline automates Docker builds, Registry push and rolling update triggers:
+The continuous integration pipeline automates Docker builds, Registry push, and rolling update triggers:
 
 ![Pipeline Passed](pipeline-passed.png)
 
@@ -285,7 +330,7 @@ Building and running a self-managed cluster introduces several real-world deploy
 ### 2. Private Container Registry Authentication (`ImagePullBackOff`)
 *   **Problem**: Kubernetes Pods failed to download the application image with the error `ImagePullBackOff`.
 *   **Root Cause**: The GitLab Container Registry containing the built images was set to Private, blocking Kubernetes' pull requests.
-*   **Fix**: Generated a GitLab Personal Access Token, registered it as a Kubernetes Registry Secret and configured the deployment YAML with the corresponding `imagePullSecrets` manifest configuration:
+*   **Fix**: Generated a GitLab Personal Access Token, registered it as a Kubernetes Registry Secret, and configured the deployment YAML with the corresponding `imagePullSecrets` manifest configuration:
     ```yaml
     spec:
       imagePullSecrets:
@@ -311,7 +356,7 @@ This project was built for educational and portfolio demonstration purposes. In 
 - **Automated Backups**: Schedule regular snapshot backups of the `etcd` datastore using tools like `etcdctl` or Velero.
 - **Resource Constraints Tuning**: Continuously profile resource requests/limits using Grafana historical data to prevent OOM errors or wasteful over-provisioning.
 - **Network Policies & RBAC**: Apply fine-grained Namespace Isolation policies and Kubernetes RBAC permissions to enforce the principle of least privilege.
-- **Secret Management Integration**: Replace default Base64 K8s Secrets with a secure external manager like HashiCorp Vault, AWS Secrets Manager or Sealed Secrets.
+- **Secret Management Integration**: Replace default Base64 K8s Secrets with a secure external manager like HashiCorp Vault, AWS Secrets Manager, or Sealed Secrets.
 - **Multi-AZ Worker Allocation**: Ensure worker nodes are spread across multiple Availability Zones (AZs) for physical hardware redundancy.
 
 ---
