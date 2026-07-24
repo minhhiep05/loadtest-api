@@ -192,9 +192,9 @@ Before deploying the Kubernetes manifests, the underlying infrastructure must be
 
 ### 1. AWS EC2 Instance Provisioning
 Create 2 EC2 Instances with the following configuration:
-* **AMI**: Ubuntu Server 22.04 LTS
+* **AMI**: Ubuntu Server 24.04 LTS
 * **Instance Type**: `t3.medium` (Minimum requirement: 2 vCPUs, 4GB RAM)
-* **Storage**: 20-30 GB gp3
+* **Storage**: 20 GB gp3
 * **Names**: `k8s-master` and `k8s-worker`
 * **Key Pair**: `k8s-lab-key.pem`
 
