@@ -11,6 +11,7 @@
 - 📌 [Introduction](#introduction)
 - 🚀 [Key Features](#key-features)
 - 🏗️ [Architecture Overview](#architecture-overview)
+- 📁 [Project Structure](#project-structure)
 - 🛠️ [Technologies Used](#technologies-used)
 - 🎬 [Demo Videos](#demo-videos)
 - 💻 [Quick Start](#quick-start)
@@ -21,6 +22,7 @@
 - 📊 [5. Monitoring Dashboard](#step-5)
 - 🌐 [6. Live Web Demo Interface](#step-6)
 - 🔄 [7. Self-healing Verification](#step-7)
+- ⚠️ [Troubleshooting & Lessons Learned](#troubleshooting-lessons-learned)
 - 🔮 [Future Production Improvements](#future-production-improvements)
 - 👤 [Author](#author)
 
@@ -135,6 +137,26 @@ flowchart TB
 
 ---
 
+<h2 id="project-structure">📁 Project Structure</h2>
+
+```text
+loadtest-api/
+├── .gitlab-ci.yml          # GitLab CI/CD Pipeline pipeline stages (build/deploy)
+├── app.py                  # Flask API containing CPU-heavy Fibonacci endpoints
+├── Dockerfile              # Multi-stage production container image build
+├── docker-compose.yml      # Local development and container testing stack
+├── loadtest.js            # k6 JavaScript load testing target scenario
+├── requirements.txt        # Python dependency manifest
+├── k8s/                    # Kubernetes declarative manifests
+│   ├── deployment.yaml     # Application deployment and ClusterIP service definitions
+│   ├── hpa.yaml            # Horizontal Pod Autoscaler configuration parameters
+│   └── ingress.yaml        # Nginx Ingress resource routing with SSL annotations
+└── templates/
+    └── index.html          # Web dashboard displaying local metric charts via Chart.js
+```
+
+---
+
 <h2 id="technologies-used">🛠️ Technologies Used</h2>
 
 | Component | Technology / Badge | Description |
@@ -147,7 +169,7 @@ flowchart TB
 | **Monitoring** | ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white) | `kube-prometheus-stack` scrapes metrics across the cluster |
 | **Visualization** | ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white) | Custom Grafana dashboards displaying Node, Pod, and App metrics |
 | **CI/CD / GitOps** | ![GitLab](https://img.shields.io/badge/GitLab-FC6D26?style=flat-square&logo=gitlab&logoColor=white) | CI/CD pipelines leveraging a custom GitLab shell-executor runner |
-| **Load Testing** | ![k6](https://img.shields.io/badge/k6-7B62FF?style=flat-square&logo=k6&logoColor=white) | Distributed CPU load testing using Javascript scenarios |
+| **Load Testing** | ![k6](https://img.shields.io/badge/k6-7B62FF?style=flat-square&logo=k6&logoColor=white) | Distributed CPU load testing using JavaScript scenarios |
 | **Demo Application** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white) | Lightweight Flask API calculating CPU-intensive Fibonacci numbers |
 
 ---
@@ -193,7 +215,7 @@ kubectl get hpa loadtest-hpa -w
 
 Verify that both nodes are successfully bootstrapped and in `Ready` state:
 
-![Nodes Ready](nodes-ready.png.png)
+![Nodes Ready](nodes-ready.png)
 
 <h2 id="step-2">🔒 2. Valid HTTPS Certificate</h2>
 
@@ -244,6 +266,36 @@ The live user interface features real-time performance graphs powered by Chart.j
    kubectl uncordon k8s-worker
    ```
    ![node uncordon](node-uncordon.png)
+
+---
+
+<h2 id="troubleshooting-lessons-learned">⚠️ Troubleshooting & Lessons Learned</h2>
+
+Building and running a self-managed cluster introduces several production hurdles. Below are the key issues identified and resolved during this deployment:
+
+### 1. Hardware Instability (`t3.micro` vs `t3.medium`)
+*   **Problem**: Nodes randomly entered the `NotReady` state under high CPU stress testing. Kubelet stopped posting node status.
+*   **Root Cause**: Bootstrapping a `kubeadm` cluster requires a minimum of 2 vCPUs and 2GB RAM. Using AWS `t3.micro` instances caused CPU credit depletion, leading to severe hypervisor throttling and system freeze.
+*   **Fix**: Upgraded both Master and Worker node EC2 instances to `t3.medium` (2 vCPUs, 4GB RAM), eliminating system freezes under stress.
+
+### 2. Private Container Registry Authentication (`ImagePullBackOff`)
+*   **Problem**: Kubernetes Pods failed to download the application image with the error `ImagePullBackOff`.
+*   **Root Cause**: The GitLab Container Registry containing the built images was set to Private, blocking Kubernetes' pull requests.
+*   **Fix**: Generated a GitLab Personal Access Token, registered it as a Kubernetes Registry Secret, and configured the deployment YAML with the corresponding `imagePullSecrets` manifest configuration:
+    ```yaml
+    spec:
+      imagePullSecrets:
+      - name: gitlab-registry-secret
+    ```
+
+### 3. Orphan Namespace Deletion Stack (`Terminating`)
+*   **Problem**: Deleting namespaces (e.g., `monitoring`) caused the namespace to hang indefinitely in the `Terminating` state.
+*   **Root Cause**: The deletion process was blocked by custom finalizers of CRDs whose controllers were already uninstalled.
+*   **Fix**: Patched the finalizers array of the namespace resource to empty `[]` using direct Kubernetes API proxy calls:
+    ```bash
+    kubectl get namespace monitoring -o json | jq '.spec.finalizers = []' > ns.json
+    kubectl replace --raw "/api/v1/namespaces/monitoring/finalize" -f ns.json
+    ```
 
 ---
 
