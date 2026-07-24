@@ -27,65 +27,87 @@ Dự án mô phỏng một hệ thống Kubernetes hoàn chỉnh gồm 2 node (m
 
 ```mermaid
 flowchart TB
+    User(["👤 Users"])
+    Developer(["👨‍💻 Developer"])
 
-    User([👤 Users])
+    subgraph K8s["☸️ Kubernetes Cluster (kubeadm — 2 nodes: Master + Worker)"]
+        direction TB
 
-    subgraph Internet
-
-        Ingress["NGINX Ingress
-        cert-manager"]
-
-    end
-
-    subgraph Kubernetes Cluster
+        subgraph IngressLayer["🌐 Ingress Layer"]
+            Ingress["NGINX Ingress Controller
+            (hostPort 80/443)"]
+            CertManager["cert-manager
+            + Let's Encrypt"]
+        end
 
         Service["ClusterIP Service"]
 
-        subgraph Deployment
-
+        subgraph Deployment["📦 Deployment"]
             Pod1["Flask Pod"]
-
             Pod2["Flask Pod"]
-
             Pod3["Flask Pod"]
-
         end
 
-        HPA["Horizontal Pod Autoscaler"]
+        HPA["⚖️ Horizontal Pod
+        Autoscaler"]
+        MetricsServer["📊 metrics-server"]
 
-        Prom["Prometheus"]
+        subgraph Monitoring["📈 Monitoring Stack"]
+            Prom["Prometheus"]
+            Grafana["Grafana"]
+        end
 
-        Grafana["Grafana"]
-
+        Runner["🏃 GitLab Runner
+        (shell executor)"]
     end
 
-    User -->|HTTPS| Ingress
+    GitLab["📁 GitLab Repository"]
+    Pipeline["🔄 GitLab CI/CD
+    Pipeline (.gitlab-ci.yml)"]
+    Registry["🐳 Container Registry"]
 
+    User -->|"HTTPS
+    app.domain.com"| Ingress
+    CertManager -.->|"cấp TLS cert"| Ingress
     Ingress --> Service
+    Service --> Pod1
+    Service --> Pod2
+    Service --> Pod3
 
-    Service --> Deployment
+    MetricsServer -.->|"CPU/Memory"| HPA
+    HPA -.->|"scale 1↔5"| Deployment
 
-    HPA -. Scale .-> Deployment
-
-    Deployment --> Prom
-
+    Pod1 & Pod2 & Pod3 --> Prom
     Prom --> Grafana
 
-    Developer([Developer])
+    Developer -->|"git push"| GitLab
+    GitLab -->|"trigger"| Pipeline
+    Pipeline -->|"chạy job"| Runner
+    Runner -->|"1. build & push"| Registry
+    Runner -->|"2. kubectl set image
+    (manual approve)"| Deployment
+    Deployment -->|"pull image"| Registry
 
-    GitLab["GitLab Repository"]
+    classDef userStyle fill:#FFE0B2,stroke:#E65100,stroke-width:2px,color:#000,font-weight:bold
+    classDef trafficStyle fill:#BBDEFB,stroke:#1565C0,stroke-width:2px,color:#000
+    classDef podStyle fill:#C8E6C9,stroke:#2E7D32,stroke-width:2px,color:#000
+    classDef controlStyle fill:#E1BEE7,stroke:#6A1B9A,stroke-width:2px,color:#000
+    classDef monitorStyle fill:#FFF9C4,stroke:#F57F17,stroke-width:2px,color:#000
+    classDef cicdStyle fill:#FFCCBC,stroke:#BF360C,stroke-width:2px,color:#000
+    classDef runnerStyle fill:#F8BBD0,stroke:#AD1457,stroke-width:2px,color:#000
 
-    Pipeline["GitLab CI/CD"]
+    class User,Developer userStyle
+    class Ingress,CertManager,Service trafficStyle
+    class Pod1,Pod2,Pod3 podStyle
+    class HPA,MetricsServer controlStyle
+    class Prom,Grafana monitorStyle
+    class GitLab,Pipeline,Registry cicdStyle
+    class Runner runnerStyle
 
-    Registry["Container Registry"]
-
-    Developer --> GitLab
-
-    GitLab --> Pipeline
-
-    Pipeline --> Registry
-
-    Registry --> Deployment
+    style K8s fill:#F1F8E9,stroke:#558B2F,stroke-width:3px
+    style IngressLayer fill:#E3F2FD,stroke:#1976D2,stroke-width:1.5px
+    style Deployment fill:#E8F5E9,stroke:#43A047,stroke-width:1.5px
+    style Monitoring fill:#FFFDE7,stroke:#FBC02D,stroke-width:1.5px
 ```
 
 
