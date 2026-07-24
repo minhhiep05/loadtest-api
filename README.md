@@ -251,7 +251,7 @@ k6 run loadtest.js
 ### Step 3: Monitor Scaling
 Observe the HPA status and pod scaling in real time:
 ```bash
-kubectl get hpa loadtest-hpa -w
+kubectl get hpa -w
 ```
 
 ---
