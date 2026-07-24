@@ -192,7 +192,7 @@ Click on the cards below to view the video demonstrations on YouTube:
 * `k6` installed locally for stress testing
 
 ### Step 1: Deploy Manifests
-Deploy the core application stack, including Ingress, Service, Deployment, and HPA:
+Deploy the core application stack, including Ingress, Service, Deployment and HPA:
 ```bash
 kubectl apply -f k8s/
 ```
