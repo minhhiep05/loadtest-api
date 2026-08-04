@@ -1,9 +1,19 @@
 # ☸️ Kubernetes HPA Auto-Scaling & Self-Healing with GitLab CI/CD
 
-[![GitLab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/doanhiep169/loadtest-api?branch=main&style=for-the-badge&logo=gitlab&logoColor=white)](https://gitlab.com/doanhiep169/loadtest-api/-/commits/main)
-[![Kubernetes Version](https://img.shields.io/badge/kubernetes-v1.30-blue?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![Docker](https://img.shields.io/badge/docker-container-blue?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Python](https://img.shields.io/badge/python-3.10-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![GitLab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/doanhiep169/loadtest-api?branch=main&style=flat-square&logo=gitlab&logoColor=white)](https://gitlab.com/doanhiep169/loadtest-api/-/commits/main)
+
+[![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Helm](https://img.shields.io/badge/Helm-0F1626?style=for-the-badge&logo=helm&logoColor=white)](https://helm.sh/)
+[![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://www.nginx.com/)
+[![Let's Encrypt](https://img.shields.io/badge/Let's_Encrypt-003A70?style=for-the-badge&logo=letsencrypt&logoColor=white)](https://letsencrypt.org/)
+[![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)](https://prometheus.io/)
+[![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
+[![GitLab](https://img.shields.io/badge/GitLab-FC6D26?style=for-the-badge&logo=gitlab&logoColor=white)](https://gitlab.com/)
+[![k6](https://img.shields.io/badge/k6-7B62FF?style=for-the-badge&logo=k6&logoColor=white)](https://k6.io/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 
 <details>
 <summary><strong>📑 Table of Contents (Click to expand)</strong></summary>
