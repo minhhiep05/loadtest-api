@@ -304,7 +304,7 @@ Visualize resource metrics and CPU load metrics via Grafana dashboards:
 
 The live user interface features real-time performance graphs powered by Chart.js:
 
-![Web Demo](web-demo.png)
+![Web Demo](docs/screenshots/web-demo.png)
 
 <h2 id="step-7">🔄 7. Self-healing Verification</h2>
 
@@ -312,19 +312,19 @@ The live user interface features real-time performance graphs powered by Chart.j
    ```bash
    kubectl cordon k8s-worker
    ```
-   ![node cordon](node-cordon.png)
+   ![node cordon](docs/screenshots/node-cordon.png)
 
 2. **Evict all running pods** off the worker node, rescheduling them on the master:
    ```bash
    kubectl drain k8s-worker --ignore-daemonsets --delete-emptydir-data --force
    ```
-   ![pod drain](pod-drain.png)
+   ![pod drain](docs/screenshots/pod-drain.png)
 
 3. **Restore the worker node** back to service after operations are completed:
    ```bash
    kubectl uncordon k8s-worker
    ```
-   ![node uncordon](node-uncordon.png)
+   ![node uncordon](docs/screenshots/node-uncordon.png)
 
 ---
 
