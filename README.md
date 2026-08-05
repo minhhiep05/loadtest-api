@@ -54,7 +54,7 @@ The project demonstrates robust DevOps patterns in a self-managed cluster, inclu
 *   🛡️ **Custom Domain & TLS Ingress Routing**: Dynamic traffic routing using a custom domain (`app.yourdomain.com` and `grafana.yourdomain.com`) with automated SSL/TLS termination via `cert-manager` and Let's Encrypt.
 *   ⚖️ **Dynamic Auto-Scaling**: Horizontal Pod Autoscaler (HPA) dynamically scales Flask app instances between 1 and 5 replicas based on real-time CPU utilization metrics.
 *   🔄 **Infrastructure Self-Healing**: Zero-downtime node drain (`cordon`/`drain`) demo where Pods are automatically evicted and rescheduled on healthy nodes.
-*   🚀 **GitOps-driven CI/CD**: Automatic Docker image builds on code changes, pushed to GitLab Registry and deployed to Kubernetes with manual approval gates.
+*   🚀 **CI/CD Pipeline (push-based)**: Automatic Docker image builds on code changes, pushed to GitLab Registry and deployed to Kubernetes with manual approval gates.
 *   📊 **Observability Stack**: Real-time cluster metrics collection and visualization using Helm-deployed Prometheus Operator and Grafana.
 
 ---
