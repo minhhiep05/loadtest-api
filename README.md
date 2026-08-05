@@ -270,7 +270,7 @@ kubectl get hpa -w
 
 Verify that both nodes are successfully bootstrapped and in `Ready` state:
 
-![Nodes Ready](nodes-ready.png.png)
+![Nodes Ready](docs/screenshots/nodes-ready.png.png)
 
 <h2 id="step-2">🔒 2. Custom Domain & Valid HTTPS Certificate</h2>
 
@@ -280,25 +280,25 @@ The cluster exposes services securely over the public internet using custom doma
 
 SSL/TLS certificates are automatically provisioned, validated and renewed by `cert-manager` using Let's Encrypt HTTP-01 challenges. Verify the certificate status:
 
-![Certificate Ready](certificate-ready.png)
+![Certificate Ready](docs/screenshots/certificate-ready.png)
 
 <h2 id="step-3">📈 3. HPA Auto-scaling Pods</h2>
 
 Watch the pods scaling dynamically as the CPU metrics hit the target threshold:
 
-![HPA Scaling](hpa-scaling.png)
+![HPA Scaling](docs/screenshots/hpa-scaling.png)
 
 <h2 id="step-4">🚀 4. GitLab CI/CD Pipeline</h2>
 
 The continuous integration pipeline automates Docker builds, Registry push and rolling update triggers:
 
-![Pipeline Passed](pipeline-passed.png)
+![Pipeline Passed](docs/screenshots/pipeline-passed.png)
 
 <h2 id="step-5">📊 5. Monitoring Dashboard</h2>
 
 Visualize resource metrics and CPU load metrics via Grafana dashboards:
 
-![Grafana Dashboard](grafana-dashboard.png)
+![Grafana Dashboard](docs/screenshots/grafana-dashboard.png)
 
 <h2 id="step-6">🌐 6. Live Web Demo Interface</h2>
 
