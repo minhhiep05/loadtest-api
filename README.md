@@ -180,7 +180,7 @@ loadtest-api/
 | **SSL/TLS Certificates** | ![Let's Encrypt](https://img.shields.io/badge/Let's_Encrypt-003A70?style=flat-square&logo=letsencrypt&logoColor=white) | Managed TLS cert renewal via `cert-manager` HTTP-01 challenges |
 | **Monitoring** | ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white) | `kube-prometheus-stack` scrapes metrics across the cluster |
 | **Visualization** | ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white) | Custom Grafana dashboards displaying Node, Pod, and App metrics |
-| **CI/CD / GitOps** | ![GitLab](https://img.shields.io/badge/GitLab-FC6D26?style=flat-square&logo=gitlab&logoColor=white) | CI/CD pipelines leveraging a custom GitLab shell-executor runner |
+| **CI/CD** | ![GitLab](https://img.shields.io/badge/GitLab-FC6D26?style=flat-square&logo=gitlab&logoColor=white) | CI/CD pipelines leveraging a custom GitLab shell-executor runner |
 | **Load Testing** | ![k6](https://img.shields.io/badge/k6-7B62FF?style=flat-square&logo=k6&logoColor=white) | Distributed CPU load testing using JavaScript scenarios |
 | **Demo Application** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white) | Lightweight Flask API calculating CPU-intensive Fibonacci numbers |
 
