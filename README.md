@@ -66,14 +66,10 @@ flowchart TB
     User(["👤 Users"])
     Developer(["👨‍💻 Developer"])
 
-    subgraph K8s["☸️ Kubernetes Cluster (kubeadm — 2 nodes: Master + Worker)"]
-        direction TB
-
+    subgraph K8s["☸️ Kubernetes Cluster (kubeadm - 2 nodes: Master + Worker)"]
         subgraph IngressLayer["🌐 Ingress Layer"]
-            Ingress["NGINX Ingress Controller
-            (hostPort 80/443)"]
-            CertManager["cert-manager
-            + Let's Encrypt"]
+            Ingress["NGINX Ingress Controller<br/>(hostPort 80/443)"]
+            CertManager["cert-manager<br/>+ Let's Encrypt"]
         end
 
         Service["ClusterIP Service"]
@@ -84,8 +80,7 @@ flowchart TB
             Pod3["Flask Pod"]
         end
 
-        HPA["⚖️ Horizontal Pod
-        Autoscaler"]
+        HPA["⚖️ Horizontal Pod<br/>Autoscaler"]
         MetricsServer["📊 metrics-server"]
 
         subgraph Monitoring["📈 Monitoring Stack"]
@@ -93,17 +88,14 @@ flowchart TB
             Grafana["Grafana"]
         end
 
-        Runner["🏃 GitLab Runner
-        (shell executor)"]
+        Runner["🏃 GitLab Runner<br/>(shell executor)"]
     end
 
     GitLab["📁 GitLab Repository"]
-    Pipeline["🔄 GitLab CI/CD
-    Pipeline (.gitlab-ci.yml)"]
+    Pipeline["🔄 GitLab CI/CD<br/>Pipeline (.gitlab-ci.yml)"]
     Registry["🐳 Container Registry"]
 
-    User -->|"HTTPS
-    app.domain.com"| Ingress
+    User -->|"HTTPS<br/>app.domain.com"| Ingress
     CertManager -.->|"issues TLS cert"| Ingress
     Ingress --> Service
     Service --> Pod1
@@ -111,20 +103,21 @@ flowchart TB
     Service --> Pod3
 
     MetricsServer -.->|"CPU/Memory"| HPA
-    HPA -.->|"scale 1↔5"| Deployment
+    HPA -.->|"scale 1 to 5"| Deployment
 
-    Pod1 & Pod2 & Pod3 --> Prom
+    Pod1 --> Prom
+    Pod2 --> Prom
+    Pod3 --> Prom
     Prom --> Grafana
 
     Developer -->|"git push"| GitLab
     GitLab -->|"trigger"| Pipeline
     Pipeline -->|"runs job"| Runner
-    Runner -->|"1. build & push"| Registry
-    Runner -->|"2. kubectl set image
-    (manual approve)"| Deployment
+    Runner -->|"1. build and push"| Registry
+    Runner -->|"2. kubectl set image<br/>(manual approve)"| Deployment
     Deployment -->|"pull image"| Registry
 
-    classDef userStyle fill:#FFE0B2,stroke:#E65100,stroke-width:2px,color:#000,font-weight:bold
+    classDef userStyle fill:#FFE0B2,stroke:#E65100,stroke-width:2px,color:#000
     classDef trafficStyle fill:#BBDEFB,stroke:#1565C0,stroke-width:2px,color:#000
     classDef podStyle fill:#C8E6C9,stroke:#2E7D32,stroke-width:2px,color:#000
     classDef controlStyle fill:#E1BEE7,stroke:#6A1B9A,stroke-width:2px,color:#000
@@ -145,8 +138,6 @@ flowchart TB
     style Deployment fill:#E8F5E9,stroke:#43A047,stroke-width:1.5px
     style Monitoring fill:#FFFDE7,stroke:#FBC02D,stroke-width:1.5px
 ```
-
----
 
 <h2 id="project-structure">📁 Project Structure</h2>
 
